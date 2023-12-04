@@ -6,6 +6,13 @@ def framing():
     file = '/Users/bohdanpopov/Documents/GitHub/OP_Project_Pandas/train.csv'
     df = pd.read_csv(file)
     return df
+
+def exp_aps(df):
+    """sorts prices"""
+    df['price'] = pd.to_numeric(df['price'].replace('[\$,]', '', regex=True), errors='coerce')
+    sorted_df = df.sort_values(by='price', ascending=False)
+    return sorted_df
+
 def most_expensive_neighborhood_group():
     pass
 
