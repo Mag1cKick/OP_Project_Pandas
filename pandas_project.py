@@ -11,7 +11,7 @@ def exp_aps(df):
     """sorts prices
     #>>> exp_aps(framing())
     """
-    df['price'] = pd.to_numeric(df['price'].replace('[\$,]', '', regex=True), errors='coerce')
+    df['price'] = pd.to_numeric(df['price'].replace(r'[\$,]', '', regex=True), errors='coerce')
     sorted_df = df.sort_values(by='price', ascending=False)
     return sorted_df
 
@@ -26,14 +26,14 @@ def most_expensive_neighborhood_group(frame):
     mean_prices = df.groupby('neighbourhood_group')['price'].mean().sort_values(ascending=False)
     return mean_prices.idxmax()
 
-def most_expensive_neighbourhood(df):
+def most_expensive_neighbourhood(frame):
     """
     Returns the neighbourhood with the highest average price.
 
     >>> most_expensive_neighbourhood(framing())
     'Fort Wadsworth'
     """
-    df = exp_aps(df)
+    df = exp_aps(frame)
     mean_prices = df.groupby('neighbourhood')['price'].mean().sort_values(ascending=False)
     return mean_prices.idxmax()
 
@@ -81,37 +81,85 @@ def host_with_most_listings(df):
     return counts.idxmax()
 
 
-def people_with_most_expencive_rooms():
-    pass
+def hosts_with_most_expensive_rooms(frame):
+    """
+    Returns the host with the most expensive room.
+
+    >>> hosts_with_most_expensive_rooms(framing())
+    'Kathrine'
+    """
+    df = exp_aps(frame)
+    sorted_df = df.sort_values(by='price', ascending=False)
+    return sorted_df.iloc[0]['host_name']
+
+def most_popular_host(df):
+    """
+    Returns the host whose listings have the most total reviews.
+
+    >>> most_popular_host(framing())
+    'Michael'
+    """
+    df['number_of_reviews'] = pd.to_numeric(df['number_of_reviews'], errors='coerce')
+    total_reviews = df.groupby('host_name')['number_of_reviews'].sum()
+    return total_reviews.idxmax()
 
 
-def most_popular_names():
-    pass
+def unusable_rooms(df):
+    """
+    Returns all rooms that have 0 available days in year
+
+    #>>> unusable_rooms(framing())
+    """
+    no_availability = df[df['availability_365'] == 0]
+    return no_availability['name']
 
 
-def unusable_rooms():
-    pass
+def price_of_avg_to_popular(frame):
+    """
+    Returns the ratio of the average price of 'Entire home/apt' to 'Private room'.
+
+    >>> price_of_avg_to_popular(framing())
+    2.36
+    """
+    df = exp_aps(frame)
+    entire_home_avg = df[df['room_type'] == 'Entire home/apt']['price'].mean()
+    private_room_avg = df[df['room_type'] == 'Private room']['price'].mean()
+    return round(entire_home_avg / private_room_avg, 2)
 
 
-def identical_listings():
-    pass
+def similar_coordinates(df):
+    """
+    Returns the names of all listings that have similar coordinates.
+
+    #>>> similar_coordinates(framing())
+    """
+    duplicates = df[df.duplicated(subset=['latitude', 'longitude'], keep=False)]
+    return duplicates['name']
 
 
-def price_of_avg_to_popular():
-    pass
+def avg_price_of_private_room(frame):
+    """
+    Returns the average price of listings where the room type is 'Private room'.
+
+    >>> avg_price_of_private_room(framing())
+    89.78
+    """
+    df = exp_aps(frame)
+
+    private_rooms = df[df['room_type'] == 'Private room']
+    return round(private_rooms['price'].mean(), 2)
 
 
-def similar_coordinates():
-    pass
+def avg_price_of_apart_or_house(frame):
+    """
+    Returns the average price of listings where the room type is 'Entire home/apt'.
 
-
-def avg_price_of_private_room():
-    pass
-
-
-def avg_price_of_apart_or_house():
-    pass
-
+    >>> avg_price_of_apart_or_house(framing())
+    211.79
+    """
+    df = exp_aps(frame)
+    entire_home = df[df['room_type'] == 'Entire home/apt']
+    return round(entire_home['price'].mean(), 2)
 
 if __name__ == '__main__':
     import doctest
