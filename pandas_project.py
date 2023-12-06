@@ -42,7 +42,8 @@ def most_popular_lists_by_reviews(df):
     Returns 5 listings with the most reviews.
 
     >>> most_popular_lists_by_reviews(framing())
-    ['Room near JFK Queen Bed', 'Great Bedroom in Manhattan', 'Beautiful Bedroom in Manhattan', 'Private Bedroom in Manhattan', 'Room Near JFK Twin Beds']
+    ['Room near JFK Queen Bed', 'Great Bedroom in Manhattan',\
+ 'Beautiful Bedroom in Manhattan', 'Private Bedroom in Manhattan', 'Room Near JFK Twin Beds']
     """
     df['number_of_reviews'] = pd.to_numeric(df['number_of_reviews'], errors='coerce')
     sorted_df = df.sort_values(by='number_of_reviews', ascending=False)
