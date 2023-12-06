@@ -64,14 +64,21 @@ def most_popular_neighbourhoods(df):
     Returns the most popular neighborhoods based on the number of listings.
 
     >>> most_popular_neighbourhoods(framing())
-    'Neighborhood Name'  # replace with the expected output
+    ['Williamsburg', 'Bedford-Stuyvesant', 'Harlem', 'Bushwick', 'Upper West Side']
     """
     counts = df['neighbourhood'].value_counts()
+    return counts.index[:5].tolist()
+
+
+def host_with_most_listings(df):
+    """
+    Returns the host with the most listings.
+
+    >>> host_with_most_listings(framing())
+    'Michael'
+    """
+    counts = df['host_name'].value_counts()
     return counts.idxmax()
-
-
-def host_with_most_listings():
-    pass
 
 
 def people_with_most_expencive_rooms():
