@@ -3,31 +3,71 @@ import pandas as pd
 
 def framing():
     """creates pandas DataFrame"""
-    file = '/Users/bohdanpopov/Documents/GitHub/OP_Project_Pandas/train.csv'
+    file = 'train.csv'
     df = pd.read_csv(file)
     return df
 
 def exp_aps(df):
-    """sorts prices"""
+    """sorts prices
+    #>>> exp_aps(framing())
+    """
     df['price'] = pd.to_numeric(df['price'].replace('[\$,]', '', regex=True), errors='coerce')
     sorted_df = df.sort_values(by='price', ascending=False)
     return sorted_df
 
-def most_expensive_neighborhood_group():
-    pass
+def most_expensive_neighborhood_group(frame):
+    """
+    Returns the neighborhood_group with the highest average price.
 
-def most_expensive_neighborhood():
-    pass
+    >>> most_expensive_neighborhood_group(framing())
+    'Manhattan'
+    """
+    df = exp_aps(frame)
+    mean_prices = df.groupby('neighbourhood_group')['price'].mean().sort_values(ascending=False)
+    return mean_prices.idxmax()
 
-def most_popular_lists_by_reviews():
-    pass
+def most_expensive_neighbourhood(df):
+    """
+    Returns the neighbourhood with the highest average price.
 
-def most_popular_neighborhood_groups():
-    pass
+    >>> most_expensive_neighbourhood(framing())
+    'Fort Wadsworth'
+    """
+    df = exp_aps(df)
+    mean_prices = df.groupby('neighbourhood')['price'].mean().sort_values(ascending=False)
+    return mean_prices.idxmax()
+
+def most_popular_lists_by_reviews(df):
+    """
+    Returns 5 listings with the most reviews.
+
+    >>> most_popular_lists_by_reviews(framing())
+    ['Room near JFK Queen Bed', 'Great Bedroom in Manhattan', 'Beautiful Bedroom in Manhattan', 'Private Bedroom in Manhattan', 'Room Near JFK Twin Beds']
+    """
+    df['number_of_reviews'] = pd.to_numeric(df['number_of_reviews'], errors='coerce')
+    sorted_df = df.sort_values(by='number_of_reviews', ascending=False)
+    return sorted_df.iloc[:5]['name'].tolist()
+
+def most_popular_neighbourhood_group(df):
+    """
+    Returns the most popular neighborhood group based on the number of listings.
+
+    >>> most_popular_neighbourhood_group(framing())
+    'Manhattan'
+    """
+    counts = df['neighbourhood_group'].value_counts()
+    return counts.idxmax()
 
 
-def most_popular_neighborhoods():
-    pass
+def most_popular_neighbourhoods(df):
+    """
+    Returns the most popular neighborhoods based on the number of listings.
+
+    >>> most_popular_neighbourhoods(framing())
+    'Neighborhood Name'  # replace with the expected output
+    """
+    counts = df['neighbourhood'].value_counts()
+    return counts.idxmax()
 
 
 def host_with_most_listings():
@@ -66,4 +106,6 @@ def avg_price_of_apart_or_house():
     pass
 
 
-frame = framing()
+if __name__ == '__main__':
+    import doctest
+    print(doctest.testmod())
